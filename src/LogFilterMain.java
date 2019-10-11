@@ -315,6 +315,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
     final String INI_FILE_CMD       = "LogFilterCmd.ini";
     final String INI_FILE_COLOR     = "LogFilterColor.ini";
     final String INI_LAST_DIR       = "LAST_DIR";
+    final String INI_CMD_ADB        = "CMD_ADB";
     final String INI_CMD_COUNT      = "CMD_COUNT";
     final String INI_CMD            = "CMD_";
     final String INI_FONT_TYPE      = "FONT_TYPE";
@@ -342,13 +343,15 @@ public class LogFilterMain extends JFrame implements INotiEvent
 
     final String INI_COMUMN         = "INI_COMUMN_";
     
+    private String m_adbCmdPath     = "adb";
+    
     void loadCmd()
     {
         try
         {
             Properties p = new Properties();
             
-            // ini ÆÄÀÏ ÀĞ±â
+            // ini é¢‡è€ ä½¬æ‰
             p.load(new FileInputStream(INI_FILE_CMD));
             
             T.d("p.getProperty(INI_CMD_COUNT) = " + p.getProperty(INI_CMD_COUNT));
@@ -359,6 +362,9 @@ public class LogFilterMain extends JFrame implements INotiEvent
                 T.d("CMD = " + INI_CMD + nIndex);
                 m_comboCmd.addItem(p.getProperty(INI_CMD + nIndex));
             }
+            
+            m_adbCmdPath = p.getProperty(INI_CMD_ADB);
+            T.d("m_adbCmdPath = " + m_adbCmdPath);
         }
         catch(Exception e)
         {
@@ -440,10 +446,10 @@ public class LogFilterMain extends JFrame implements INotiEvent
         {
             Properties p = new Properties();
             
-            // ini ÆÄÀÏ ÀĞ±â
+            // ini é¢‡è€ ä½¬æ‰
             p.load(new FileInputStream(INI_FILE));
             
-            // Key °ª ÀĞ±â
+            // Key è”¼ ä½¬æ‰
             String strFontType = p.getProperty(INI_FONT_TYPE);
             if(strFontType != null && strFontType.length() > 0)
                 m_jcFontType.setSelectedItem(p.getProperty(INI_FONT_TYPE));
@@ -516,26 +522,26 @@ public class LogFilterMain extends JFrame implements INotiEvent
     {
         addDesc(VERSION);
         addDesc("");
-        addDesc("Version 1.8 : java -jar LogFilter_xx.jar [filename] Ãß°¡");
-        addDesc("Version 1.7 : copy½Ã º¸ÀÌ´Â column¸¸ clipboard¿¡ º¹»ç(Line Á¦¿Ü)");
-        addDesc("Version 1.6 : cmdÄŞº¸¹Ú½º ±æÀÌ °íÁ¤");
-        addDesc("Version 1.5 : Highlight color listÃß°¡()");
-        addDesc("   - LogFilterColor.ini ¿¡ Ä«¿îÆ®¿Í °ª ³Ö¾î ÁÖ½Ã¸é µË´Ï´Ù.");
+        addDesc("Version 1.8 : java -jar LogFilter_xx.jar [filename] çœ å•Š");
+        addDesc("Version 1.7 : copyçŸ« ç„Šæç»° columnçˆ¶ clipboardä¿Š æ±—è¤(Line åŠ›å¯‡)");
+        addDesc("Version 1.6 : cmdéœ“ç„Šå† èƒ¶ è¾¨æ ç»Šæ²¥");
+        addDesc("Version 1.5 : Highlight color listçœ å•Š()");
+        addDesc("   - LogFilterColor.ini ä¿Š å¢¨æ¬¾é£˜å®¢ è”¼ æŒç»¢ æ—çŸ«æ é‚“èªä¿ƒ.");
         addDesc("   - ex)INI_HIGILIGHT_COUNT=2");
         addDesc("   -    INI_COLOR_HIGILIGHT_0=0xFFFF");
         addDesc("   -    INI_COLOR_HIGILIGHT_1=0x00FF");
-        addDesc("Version 1.4 : Ã¢Å©±â ÀúÀå");
-        addDesc("Version 1.3 : recent file ¹× open¸Ş´ºÃß°¡");
-        addDesc("Version 1.2 : Tid ÇÊÅÍ Ãß°¡");
-        addDesc("Version 1.1 : Level F Ãß°¡");
-        addDesc("Version 1.0 : Pid filter Ãß°¡");
-        addDesc("Version 0.9 : Font type Ãß°¡");
-        addDesc("Version 0.8 : ÇÊÅÍÃ¼Å© ¹Ú½º Ãß°¡");
-        addDesc("Version 0.7 : Ä¿³Î·Î±× ÆÄ½Ì/LogFilter.ini¿¡ ÄÃ·¯Á¤ÀÇ(0~7)");
-        addDesc("Version 0.6 : ÇÊÅÍ ´ë¼Ò¹® ¹«½Ã");
-        addDesc("Version 0.5 : ¸í·É¾î iniÆÄÀÏ·Î ÀúÀå");
-        addDesc("Version 0.4 : add thread option, filter ÀúÀå");
-        addDesc("Version 0.3 : ´Ü¸» ¼±ÅÃ ¾ÈµÇ´Â ¹®Á¦ ¼öÁ¤");
+        addDesc("Version 1.4 : èŠ’å†œæ‰ å†å˜");
+        addDesc("Version 1.3 : recent file æ£º opençš‹æ˜¥çœ å•Š");
+        addDesc("Version 1.2 : Tid é˜ç£ çœ å•Š");
+        addDesc("Version 1.1 : Level F çœ å•Š");
+        addDesc("Version 1.0 : Pid filter çœ å•Š");
+        addDesc("Version 0.9 : Font type çœ å•Š");
+        addDesc("Version 0.8 : é˜ç£çœ‰å†œ å† èƒ¶ çœ å•Š");
+        addDesc("Version 0.7 : ç›®æ¾„è‚ºå¼Š é¢‡æ•™/LogFilter.iniä¿Š æ‹¿çŸ¾æ²¥ç‹¼(0~7)");
+        addDesc("Version 0.6 : é˜ç£ æªå®¶å·© å…¬çŸ«");
+        addDesc("Version 0.5 : ç–™é£ç»¢ inié¢‡è€è‚º å†å˜");
+        addDesc("Version 0.4 : add thread option, filter å†å˜");
+        addDesc("Version 0.3 : çªœå¯Œ æ€¥ç¶ æ•‘ç™»ç»° å·©åŠ› èæ²¥");
         addDesc("");
         addDesc("[Tag]");
         addDesc("Alt+L/R Click : Show/Remove tag");
@@ -554,7 +560,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
     }
 
     /**
-     * @param nIndex    ½ÇÁ¦ ¸®½ºÆ®ÀÇ ÀÎµ¦½º
+     * @param nIndex    è§’åŠ› åºœèƒ¶é£˜ç‹¼ ç‰¢éƒ¸èƒ¶
      * @param nLine     m_strLine
      * @param bBookmark
      */
@@ -1257,13 +1263,13 @@ public class LogFilterMain extends JFrame implements INotiEvent
             String strCommand = DEVICES_CMD[m_comboDeviceCmd.getSelectedIndex()];
             if(m_comboDeviceCmd.getSelectedIndex() == DEVICES_CUSTOM)
                 strCommand = (String)m_comboDeviceCmd.getSelectedItem();
-            Process oProcess = Runtime.getRuntime().exec(strCommand);
+            Process oProcess = Runtime.getRuntime().exec(strCommand.replace("adb", m_adbCmdPath));
 
-            // ¿ÜºÎ ÇÁ·Î±×·¥ Ãâ·Â ÀĞ±â
+            // å¯‡ä½• æ©‡è‚ºå¼Šä¼ å…ä»¿ ä½¬æ‰
             BufferedReader stdOut   = new BufferedReader(new InputStreamReader(oProcess.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(oProcess.getErrorStream()));
 
-            // "Ç¥ÁØ Ãâ·Â"°ú "Ç¥ÁØ ¿¡·¯ Ãâ·Â"À» Ãâ·Â
+            // "é’éœ– å…ä»¿"è‹ "é’éœ– ä¿ŠçŸ¾ å…ä»¿"é˜‘ å…ä»¿
             while ((s =   stdOut.readLine()) != null)
             {
                 if(!s.equals("List of devices attached "))
@@ -1278,7 +1284,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
                 listModel.addElement(s);
             }
 
-            // ¿ÜºÎ ÇÁ·Î±×·¥ ¹İÈ¯°ª Ãâ·Â (ÀÌ ºÎºĞÀº ÇÊ¼ö°¡ ¾Æ´Ô)
+            // å¯‡ä½• æ©‡è‚ºå¼Šä¼ é¦†åˆ¸è”¼ å…ä»¿ (æ ä½•ç›’ç¯® é˜èå•Š é…’ä¸›)
             System.out.println("Exit Code: " + oProcess.exitValue());
         }
         catch(Exception e)
@@ -1695,7 +1701,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
                     m_Process = null;
                     setProcessCmd(m_comboDeviceCmd.getSelectedIndex(), m_strSelectedDevice);
 
-                    T.d("getProcessCmd() = " + getProcessCmd());
+                    T.d("getProcessCmd() = " + getProcessCmd().replace("adb", m_adbCmdPath));
                     m_Process = Runtime.getRuntime().exec(getProcessCmd());
                     BufferedReader stdOut   = new BufferedReader(new InputStreamReader(m_Process.getInputStream(), "UTF-8"));
 
@@ -1718,7 +1724,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
                         }
                     }
                     fileOut.close();
-//                    T.d("Exit Code: " + m_Process.exitValue());
+                    T.d("Exit Code: " + m_Process.exitValue());
                 }
                 catch(Exception e)
                 {
