@@ -1,0 +1,1 @@
+echo "CMD_ADB=$(which adb)" >> LogFilterCmd.ini

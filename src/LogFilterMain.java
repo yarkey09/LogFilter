@@ -363,8 +363,11 @@ public class LogFilterMain extends JFrame implements INotiEvent
                 m_comboCmd.addItem(p.getProperty(INI_CMD + nIndex));
             }
             
-            m_adbCmdPath = p.getProperty(INI_CMD_ADB);
-            T.d("m_adbCmdPath = " + m_adbCmdPath);
+            String adbCmdPathConfig = p.getProperty(INI_CMD_ADB);
+            if (adbCmdPathConfig != null && adbCmdPathConfig.length() > 0) {
+            	m_adbCmdPath = adbCmdPathConfig;
+            	T.d("m_adbCmdPath = " + m_adbCmdPath);
+            }
         }
         catch(Exception e)
         {
@@ -1701,8 +1704,9 @@ public class LogFilterMain extends JFrame implements INotiEvent
                     m_Process = null;
                     setProcessCmd(m_comboDeviceCmd.getSelectedIndex(), m_strSelectedDevice);
 
-                    T.d("getProcessCmd() = " + getProcessCmd().replace("adb", m_adbCmdPath));
-                    m_Process = Runtime.getRuntime().exec(getProcessCmd());
+                    String finalCmd = getProcessCmd().replace("adb", m_adbCmdPath);
+                    T.d("getProcessCmd() = " + finalCmd);
+                    m_Process = Runtime.getRuntime().exec(finalCmd);
                     BufferedReader stdOut   = new BufferedReader(new InputStreamReader(m_Process.getInputStream(), "UTF-8"));
 
 //                    BufferedWriter fileOut = new BufferedWriter(new FileWriter(m_strLogFileName));
