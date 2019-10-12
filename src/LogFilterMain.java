@@ -131,6 +131,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
     
     //Word Filter, tag filter
     JTextField                m_tfHighlight;
+    JTextField				  m_tfAdbCmdPath;
     JTextField                m_tfFindWord;
     JTextField                m_tfRemoveWord;
     JTextField                m_tfShowTag;
@@ -146,6 +147,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
     JButton                   m_btnSetFont;
 
     //Log filter enable/disable
+    JCheckBox				  m_chkEnableAdbCmdPath;
     JCheckBox                 m_chkEnableFind;
     JCheckBox                 m_chkEnableRemove;
     JCheckBox                 m_chkEnableShowTag;
@@ -343,8 +345,6 @@ public class LogFilterMain extends JFrame implements INotiEvent
 
     final String INI_COMUMN         = "INI_COMUMN_";
     
-    private String m_adbCmdPath     = "adb";
-    
     void loadCmd()
     {
         try
@@ -361,12 +361,6 @@ public class LogFilterMain extends JFrame implements INotiEvent
             {
                 T.d("CMD = " + INI_CMD + nIndex);
                 m_comboCmd.addItem(p.getProperty(INI_CMD + nIndex));
-            }
-            
-            String adbCmdPathConfig = p.getProperty(INI_CMD_ADB);
-            if (adbCmdPathConfig != null && adbCmdPathConfig.length() > 0) {
-            	m_adbCmdPath = adbCmdPathConfig;
-            	T.d("m_adbCmdPath = " + m_adbCmdPath);
             }
         }
         catch(Exception e)
@@ -457,6 +451,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
             if(strFontType != null && strFontType.length() > 0)
                 m_jcFontType.setSelectedItem(p.getProperty(INI_FONT_TYPE));
             m_tfFindWord.setText(p.getProperty(INI_WORD_FIND));
+            m_tfAdbCmdPath.setText(p.getProperty(INI_CMD_ADB));
             m_tfRemoveWord.setText(p.getProperty(INI_WORD_REMOVE));
             m_tfShowTag.setText(p.getProperty(INI_TAG_SHOW));
             m_tfRemoveTag.setText(p.getProperty(INI_TAG_REMOVE));
@@ -491,6 +486,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
 //            p.setProperty( INI_LAST_DIR, m_strLastDir );
             p.setProperty(INI_FONT_TYPE,   (String)m_jcFontType.getSelectedItem());
             p.setProperty(INI_WORD_FIND,   m_tfFindWord.getText());
+            p.setProperty(INI_CMD_ADB, m_tfAdbCmdPath.getText());
             p.setProperty(INI_WORD_REMOVE, m_tfRemoveWord.getText());
             p.setProperty(INI_TAG_SHOW,    m_tfShowTag.getText());
             p.setProperty(INI_TAG_REMOVE,  m_tfRemoveTag.getText());
@@ -816,12 +812,14 @@ public class LogFilterMain extends JFrame implements INotiEvent
 
     Component getFilterPanel()
     {
+    	m_chkEnableAdbCmdPath   = new JCheckBox();
         m_chkEnableFind         = new JCheckBox();
         m_chkEnableRemove       = new JCheckBox();
         m_chkEnableShowTag      = new JCheckBox();
         m_chkEnableRemoveTag    = new JCheckBox();
         m_chkEnableShowPid      = new JCheckBox();
         m_chkEnableShowTid      = new JCheckBox();
+        m_chkEnableAdbCmdPath.setSelected(true);
         m_chkEnableFind.setSelected(true);
         m_chkEnableRemove.setSelected(true);
         m_chkEnableShowTag.setSelected(true);
@@ -829,6 +827,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
         m_chkEnableShowPid.setSelected(true);
         m_chkEnableShowTid.setSelected(true);
 
+        m_tfAdbCmdPath  = new JTextField();
         m_tfFindWord    = new JTextField();
         m_tfRemoveWord  = new JTextField();
         m_tfShowTag     = new JTextField();
@@ -838,6 +837,18 @@ public class LogFilterMain extends JFrame implements INotiEvent
 
         JPanel jpMain = new JPanel(new BorderLayout());
 
+        // add by zhangyeqi at 20191012
+        JPanel jpCmdPath = new JPanel(new BorderLayout());
+        jpCmdPath.setBorder(BorderFactory.createTitledBorder("Env Path"));
+        JPanel jpAdb = new JPanel(new BorderLayout());
+        JLabel jlAdb = new JLabel();
+        jlAdb.setText("        adb : ");
+        jpAdb.add(jlAdb, BorderLayout.WEST);
+        jpAdb.add(m_tfAdbCmdPath, BorderLayout.CENTER);
+        jpAdb.add(m_chkEnableAdbCmdPath, BorderLayout.EAST);
+        jpCmdPath.add(jpAdb, BorderLayout.NORTH);
+        jpMain.add(jpCmdPath, BorderLayout.NORTH);
+        
         JPanel jpWordFilter = new JPanel(new BorderLayout());
         jpWordFilter.setBorder(BorderFactory.createTitledBorder("Word filter"));
 
@@ -858,7 +869,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
         jpWordFilter.add(jpFind, BorderLayout.NORTH);
         jpWordFilter.add(jpRemove);
 
-        jpMain.add(jpWordFilter, BorderLayout.NORTH);
+        jpMain.add(jpWordFilter, BorderLayout.CENTER);
 
         JPanel jpTagFilter = new JPanel(new GridLayout(4, 1));
         jpTagFilter.setBorder(BorderFactory.createTitledBorder("Tag filter"));
@@ -896,7 +907,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
         jpTagFilter.add(jpShow);
         jpTagFilter.add(jpRemoveTag);
 
-        jpMain.add(jpTagFilter, BorderLayout.CENTER);
+        jpMain.add(jpTagFilter, BorderLayout.SOUTH);
 
         return jpMain;
     }
@@ -1266,7 +1277,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
             String strCommand = DEVICES_CMD[m_comboDeviceCmd.getSelectedIndex()];
             if(m_comboDeviceCmd.getSelectedIndex() == DEVICES_CUSTOM)
                 strCommand = (String)m_comboDeviceCmd.getSelectedItem();
-            Process oProcess = Runtime.getRuntime().exec(strCommand.replace("adb", m_adbCmdPath));
+            Process oProcess = Runtime.getRuntime().exec(replaceAdbCmdPath(strCommand));
 
             // 寇何 橇肺弊伐 免仿 佬扁
             BufferedReader stdOut   = new BufferedReader(new InputStreamReader(oProcess.getInputStream()));
@@ -1387,6 +1398,15 @@ public class LogFilterMain extends JFrame implements INotiEvent
         }
     }
 
+    String replaceAdbCmdPath(String cmd) {
+    	String adbEnvPath = m_tfAdbCmdPath.getText();
+    	if (m_chkEnableAdbCmdPath.isSelected() && adbEnvPath != null && adbEnvPath.trim() != null && adbEnvPath.trim().length() > 0) {
+    		T.d("replaceAdbCmdPath : " + adbEnvPath);
+    		return cmd.replace("adb", adbEnvPath);
+    	}
+    	return cmd;
+    }
+    
     String getProcessCmd()
     {
         if(m_lDeviceList.getSelectedIndex() < 0)
@@ -1704,7 +1724,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
                     m_Process = null;
                     setProcessCmd(m_comboDeviceCmd.getSelectedIndex(), m_strSelectedDevice);
 
-                    String finalCmd = getProcessCmd().replace("adb", m_adbCmdPath);
+                    String finalCmd = replaceAdbCmdPath(getProcessCmd());
                     T.d("getProcessCmd() = " + finalCmd);
                     m_Process = Runtime.getRuntime().exec(finalCmd);
                     BufferedReader stdOut   = new BufferedReader(new InputStreamReader(m_Process.getInputStream(), "UTF-8"));
