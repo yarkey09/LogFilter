@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -305,6 +306,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
         loadColor();
         loadCmd();
         m_tbLogTable.setColumnWidth();
+        m_tbLogTable.setSelectionBackground(new Color(LogColor.COLOR_LOG_SELECTED_BG));
 
 //        if(m_nWindState == JFrame.MAXIMIZED_BOTH)
 //        else
@@ -337,6 +339,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
     final String INI_COLOR_6        = "INI_COLOR_6(I)";
     final String INI_COLOR_7        = "INI_COLOR_7(D)";
     final String INI_COLOR_8        = "INI_COLOR_8(F)";
+    final String INI_COLOR_LOG_SELECTED_BG = "INI_COLOR_LOG_SELECTED_BG";
     final String INI_HIGILIGHT_COUNT= "INI_HIGILIGHT_COUNT";
     final String INI_HIGILIGHT_=    "INI_HIGILIGHT_";
     final String INI_WIDTH          = "INI_WIDTH";
@@ -387,6 +390,10 @@ public class LogFilterMain extends JFrame implements INotiEvent
             LogColor.COLOR_DEBUG = LogColor.COLOR_7 = Integer.parseInt(p.getProperty(INI_COLOR_7).replace("0x", ""), 16);
             LogColor.COLOR_FATAL = LogColor.COLOR_8 = Integer.parseInt(p.getProperty(INI_COLOR_8).replace("0x", ""), 16);
             
+            if (p.containsKey(INI_COLOR_LOG_SELECTED_BG)) {
+            	LogColor.COLOR_LOG_SELECTED_BG = Integer.parseInt(p.getProperty(INI_COLOR_LOG_SELECTED_BG).replace("0x", ""), 16);
+            }
+            
             int nCount = Integer.parseInt(p.getProperty( INI_HIGILIGHT_COUNT, "0" ));
             if(nCount > 0)
             {
@@ -421,6 +428,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
             p.setProperty(INI_COLOR_6, "0x" + Integer.toHexString(LogColor.COLOR_6).toUpperCase());
             p.setProperty(INI_COLOR_7, "0x" + Integer.toHexString(LogColor.COLOR_7).toUpperCase());
             p.setProperty(INI_COLOR_8, "0x" + Integer.toHexString(LogColor.COLOR_8).toUpperCase());
+            p.setProperty(INI_COLOR_LOG_SELECTED_BG, "0x" + Integer.toHexString(LogColor.COLOR_LOG_SELECTED_BG).toUpperCase());
 
             if(LogColor.COLOR_HIGHLIGHT != null)
             {

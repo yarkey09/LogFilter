@@ -18,5 +18,9 @@ public class LogColor
     public static int   COLOR_6         = COLOR_INFO;
     public static int   COLOR_7         = COLOR_DEBUG;
     public static int   COLOR_8         = COLOR_ERROR;
+    
+    // LogTable selection background
+    public static int   COLOR_LOG_SELECTED_BG = 0x00CCCCCC;
+    
     public static String[] COLOR_HIGHLIGHT;
 }
