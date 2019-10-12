@@ -76,7 +76,7 @@ public class LogFilterMain extends JFrame implements INotiEvent
     private static final long serialVersionUID           = 1L;
     
     static final String       LOGFILTER                  = "LogFilter";
-    static final String       VERSION                    = "Version 1.8";
+    static final String       VERSION                    = "Version 1.9";
     final String              COMBO_ANDROID              = "Android          ";
     final String              COMBO_IOS                  = "ios";
     final String              COMBO_CUSTOM_COMMAND       = "custom command";
@@ -520,6 +520,9 @@ public class LogFilterMain extends JFrame implements INotiEvent
     void addDesc()
     {
         addDesc(VERSION);
+        addDesc("");
+        addDesc("Version 1.9 : input adb command path to solve some environment path problem (MacOS) by zhangyeqi");
+        addDesc("   - 新增adb命令路径输入框，解决某些环境变量设置有误导致无法使用的问题 (比如Mac系统)  -- 张烨其");
         addDesc("");
         addDesc("Version 1.8 : java -jar LogFilter_xx.jar [filename] 眠啊");
         addDesc("Version 1.7 : copy矫 焊捞绰 column父 clipboard俊 汗荤(Line 力寇)");
